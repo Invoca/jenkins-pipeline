@@ -60,3 +60,5 @@ def imageTag(String image_name, String current_tag, String new_tag) {
     println "Docker Tag: ${image_name}:${current_tag} --> ${new_tag}"
     sh "docker tag ${image_name}:${current_tag} ${image_name}:${new_tag}"
 }
+
+return this
