@@ -36,12 +36,12 @@ def containerBuildPush(Map args) {
     sh buildCommand(args)
     imagePush(image_name, env.GIT_COMMIT)
     
-    if ($GIT_BRANCH == 'master') {
+    if (env.GIT_BRANCH == 'master') {
         imageTag(image_name, env.GIT_COMMIT, 'latest')
         imagePush(image_name, 'latest')
     }
 
-    if ($GIT_BRANCH == 'production') {
+    if (env.GIT_BRANCH == 'production') {
         imageTag(image_name, env.GIT_COMMIT, 'production')
         imagePush(image_name, 'production')
     }
