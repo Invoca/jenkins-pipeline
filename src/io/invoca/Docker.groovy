@@ -7,6 +7,7 @@ package io.invoca;
     image_name  string
 */
 
+@NonCPS
 def buildCommand(Map args) {
     def String build_args = ["", *args.build_args].join(' --build-arg ')
     def String cmd
