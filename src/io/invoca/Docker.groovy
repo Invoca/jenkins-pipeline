@@ -9,7 +9,7 @@ package io.invoca;
 */
 
 def buildCommand(Map args) {
-    def String build_args
+    def String build_args = ""
     def String cmd
     def String image_name = imageName(args.org, args.image)
     
