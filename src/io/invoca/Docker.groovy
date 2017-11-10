@@ -43,6 +43,7 @@ def imageTag(String image_name, String current_tag, String new_tag) {
 }
 
 def imageTagPush(String image_name) {
+    hubLogin()
     imagePush(image_name, env.GIT_COMMIT)
     
     if (env.GIT_BRANCH == 'master') {
@@ -53,6 +54,15 @@ def imageTagPush(String image_name) {
     if (env.GIT_BRANCH == 'production') {
         imageTag(image_name, env.GIT_COMMIT, 'production')
         imagePush(image_name, 'production')
+    }
+}
+
+def hubLogin() {
+    try {
+        sh "docker login -u ${env.DOCKERHUB_USER} -p ${env.DOCKERHUB_PASSWORD}"
+    }
+    catch (exc) {
+        echo "Unable to login to DockerHub!"
     }
 }
 
