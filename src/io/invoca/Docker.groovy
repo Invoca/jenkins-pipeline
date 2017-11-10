@@ -27,7 +27,7 @@ def buildCommand(Map args, List build_args) {
     return cmd
 }
 
-def imageBuild(Maps args, List build_args = []) {
+def imageBuild(Map args, List build_args = []) {
     sh buildCommand(args, build_args)
 }
 
