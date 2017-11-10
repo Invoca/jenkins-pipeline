@@ -19,11 +19,13 @@ pipeline {
     agent any
     stages {
         stage('Build and push') {
-            docker.containerBuildPush(
-                dockerfile: '.',
-                org:        'invocaops',
-                image:      'imagename'
-            )
+            script {
+                docker.containerBuildPush(
+                    dockerfile: '.',
+                    org:        'invocaops',
+                    image:      'imagename'
+                )
+            }
         }
     }
 
