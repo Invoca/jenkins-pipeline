@@ -40,10 +40,6 @@ pipeline {
     agent any
     stages {
         stage('Setup') {
-            environment {
-                DOCKERHUB_USER = credentials('dockerhub_user')
-                DOCKERHUB_PASSWORD = credentials('dockerhub_password')
-            }
             steps {
                 script {
                     imageArgs = [
@@ -59,6 +55,10 @@ pipeline {
             }
         }
         stage('Push') {
+            environment {
+                DOCKERHUB_USER = credentials('dockerhub_user')
+                DOCKERHUB_PASSWORD = credentials('dockerhub_password')
+            }
             steps {
                 script { docker.imageTagPush(imageArgs.image_name) }
             }
