@@ -2,15 +2,13 @@
 package io.invoca;
 
 /* args
+    build_args  list (optional)
     dockerfile  string
     image_name  string
 */
 
-def buildCommand(Map args, List build_args) {
-    println "buildCommand args: ${args}"
-    println "buildCommand build_args: ${build_args}"
-
-    def String build_args_str = ""
+def buildCommand(Map args) {
+    def String build_args = ["", *args.build_args].join(' --build-arg ')
     def String cmd
     
     // http://label-schema.org/rc1/
@@ -19,19 +17,16 @@ def buildCommand(Map args, List build_args) {
             --label org.label-schema.build-date=`date -u +\"%Y-%m-%dT%H:%M:%SZ\"` \
             --label org.label-schema.vcs-url=${env.GIT_URL}"
     
-    for (ba in build_args) {
-        build_args_str += "--build-arg ${ba} "
-    }
-    if (build_args_str) {
-        cmd += " ${build_args_str}"
+    if (build_args) {
+        cmd += " ${build_args}"
     }
 
     cmd += " ${args.dockerfile}"
     return cmd
 }
 
-def imageBuild(Map args, List build_args = []) {
-    sh buildCommand(args, build_args)
+def imageBuild(Map args) {
+    sh buildCommand(args)
 }
 
 def imagePush(String image_name, String tag) {
