@@ -16,7 +16,7 @@ def buildCommand(Map args, List build_args) {
             --label org.label-schema.build-date=`date -u +\"%Y-%m-%dT%H:%M:%SZ\"` \
             --label org.label-schema.vcs-url=${env.GIT_URL}"
     
-    for (ba in args.build_args) {
+    for (ba in build_args) {
         build_args_str += "--build-arg ${ba} "
     }
     if (build_args_str) {
