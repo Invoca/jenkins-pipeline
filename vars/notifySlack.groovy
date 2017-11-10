@@ -1,26 +1,37 @@
-def call (String buildStatus, String channel = '#dev-jenkins') {
-    // build status of null means successful
-    buildStatus = buildStatus ?: 'SUCCESS'
+def call (String buildStatus, String message = "", String channel = "#dev-jenkins") {
+    // build status of null means ongoing
+    buildStatus = buildStatus ?: 'ONGOING'
 
-    def color
+    def String color
     switch(buildStatus) {
-        case 'SUCCESS':
-            color = 'good'
-            break
         case 'ABORTED':
             color = '#D3D3D3'
             break
         case 'FAILURE':
             color = 'danger'
             break
+        case 'ONGOING':
+            color = '#D3D3D3'
+            break
+        case 'SUCCESS':
+            color = 'good'
+            break
+        case 'UNSTABLE':
+            color = 'warning',
+            break
         default:
             color = 'warning'
             break
     }
 
-    // SUCCESS: Job 'web/PR-7750 [42]' (https://jenkins.instance.com/job/web/job/PR-7750/42/)
-    def summary = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
+    def String msg
+    if (message) {
+        msg = message
+    } else {
+        // SUCCESS: Job 'web/PR-7750 [42]' (https://jenkins.instance.com/job/web/job/PR-7750/42/)
+        msg = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
+    }
 
     // Send notification
-    slackSend(channel: channel, color: color, message: summary)
+    slackSend(channel: channel, color: color, message: msg)
 }
