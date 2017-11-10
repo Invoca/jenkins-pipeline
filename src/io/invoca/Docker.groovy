@@ -13,10 +13,10 @@ def buildCommand(Map args) {
     def String cmd
     
     // http://label-schema.org/rc1/
-    cmd = "docker build -t ${args.image_name}:${env.GIT_COMMIT} \
+    cmd = "docker build -t ${args.image_name}:$GIT_COMMIT \
             --label org.label-schema.schema-version=1.0 \
             --label org.label-schema.build-date=`date -u +\"%Y-%m-%dT%H:%M:%SZ\"` \
-            --label org.label-schema.vcs-url=${env.GIT_URL}"
+            --label org.label-schema.vcs-url=$GIT_URL"
     
     if (build_args) {
         cmd += " ${build_args}"
@@ -59,7 +59,7 @@ def imageTagPush(String image_name) {
 
 def hubLogin() {
     try {
-        sh "docker login -u ${env.DOCKERHUB_USER} -p ${env.DOCKERHUB_PASSWORD}"
+        sh "docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASSWORD"
     }
     catch (exc) {
         echo "Unable to login to DockerHub!"
