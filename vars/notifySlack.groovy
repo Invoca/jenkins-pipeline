@@ -33,6 +33,10 @@ def call (String buildStatus, String message = "", String channel = "#dev-jenkin
         msg = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
     }
 
-    // Send notification
-    slackSend(channel: channel, color: color, message: msg)
+    try {
+        slackSend(channel: channel, color: color, message: msg)
+    }
+    catch (exc) {
+        echo "Unable to notify Slack!"
+    }
 }
