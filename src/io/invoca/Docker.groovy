@@ -7,7 +7,8 @@ package io.invoca;
 */
 
 def buildCommand(Map args, List build_args) {
-    println "buildCommand: args = ${args}"
+    println "buildCommand args: ${args}"
+    println "buildCommand build_args: ${build_args}"
 
     def String build_args_str = ""
     def String cmd
