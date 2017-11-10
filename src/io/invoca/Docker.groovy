@@ -2,38 +2,48 @@
 package io.invoca;
 
 /* args
-    build_args  list (optional)
     dockerfile  string
-    image       string
-    org         string
+    image_name  string
 */
 
-def buildCommand(Map args) {
-    def String build_args = ""
+def buildCommand(Map args, List build_args) {
+    def String build_args_str = ""
     def String cmd
-    def String image_name = imageName(args.org, args.image)
     
-    cmd = "docker build -t ${image_name}:${env.GIT_COMMIT} \
+    // http://label-schema.org/rc1/
+    cmd = "docker build -t ${args.image_name}:${env.GIT_COMMIT} \
             --label org.label-schema.schema-version=1.0 \
             --label org.label-schema.build-date=`date -u +\"%Y-%m-%dT%H:%M:%SZ\"` \
             --label org.label-schema.vcs-url=${env.GIT_URL}"
     
     for (ba in args.build_args) {
-        build_args += "--build-arg ${ba} "
+        build_args_str += "--build-arg ${ba} "
     }
-    if (build_args) {
-        cmd += " ${build_args}"
+    if (build_args_str) {
+        cmd += " ${build_args_str}"
     }
 
     cmd += " ${args.dockerfile}"
     return cmd
 }
 
-def containerBuildPush(Map args) {
-    def String image_name = imageName(args.org, args.image)
+def imageBuild(Maps args, List build_args = []) {
+    sh buildCommand(args, build_args)
+}
 
-    println "Docker Build: ${image_name}:${env.GIT_COMMIT}"
-    sh buildCommand(args)
+def imagePush(String image_name, String tag) {
+    sh "docker push ${image_name}:${tag}"
+}
+
+def imageRemove(String image_name, String tag) {
+    sh "docker rmi ${image_name}:${tag}"
+}
+
+def imageTag(String image_name, String current_tag, String new_tag) {
+    sh "docker tag ${image_name}:${current_tag} ${image_name}:${new_tag}"
+}
+
+def imageTagPush(String image_name) {
     imagePush(image_name, env.GIT_COMMIT)
     
     if (env.GIT_BRANCH == 'master') {
@@ -45,20 +55,6 @@ def containerBuildPush(Map args) {
         imageTag(image_name, env.GIT_COMMIT, 'production')
         imagePush(image_name, 'production')
     }
-}
-
-def imageName(String org, String image) {
-    return "${org}/${image}"
-}
-
-def imagePush(String image_name, String tag) {
-    println "Docker Push: ${image_name}:${tag}"
-    sh "docker push ${image_name}:${tag}"
-}
-
-def imageTag(String image_name, String current_tag, String new_tag) {
-    println "Docker Tag: ${image_name}:${current_tag} --> ${new_tag}"
-    sh "docker tag ${image_name}:${current_tag} ${image_name}:${new_tag}"
 }
 
 return this
