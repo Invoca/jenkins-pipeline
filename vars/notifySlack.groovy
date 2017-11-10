@@ -1,4 +1,3 @@
-@NonCPS
 def call (String buildStatus, String message = "", String channel = "#dev-jenkins") {
     // build status of null means ongoing
     buildStatus = buildStatus ?: 'ONGOING'
@@ -18,7 +17,7 @@ def call (String buildStatus, String message = "", String channel = "#dev-jenkin
             color = 'good'
             break
         case 'UNSTABLE':
-            color = 'warning',
+            color = 'warning'
             break
         default:
             color = 'warning'
