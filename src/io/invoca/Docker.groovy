@@ -18,7 +18,7 @@ def buildCommand(Map args) {
             --label org.label-schema.vcs-url=$GIT_URL"
     
     if (args.build_args) {
-        cmd += " --build-arg ${args.build_args.join(' --build-arg ')}"
+        cmd += args.build_args.collect { " --build-arg ${it}" }.join(" ")
     }
 
     cmd += " ${args.dockerfile}"
