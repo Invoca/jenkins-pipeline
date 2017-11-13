@@ -9,7 +9,6 @@ package io.invoca;
 
 @NonCPS
 def buildCommand(Map args) {
-    def String build_args = ["", *args.build_args].join(' --build-arg ')
     def String cmd
     
     // http://label-schema.org/rc1/
@@ -18,8 +17,8 @@ def buildCommand(Map args) {
             --label org.label-schema.build-date=`date -u +\"%Y-%m-%dT%H:%M:%SZ\"` \
             --label org.label-schema.vcs-url=$GIT_URL"
     
-    if (build_args) {
-        cmd += " ${build_args}"
+    if (args.build_args) {
+        cmd += " --build-arg ${args.build_args.join(' --build-arg ')}"
     }
 
     cmd += " ${args.dockerfile}"
