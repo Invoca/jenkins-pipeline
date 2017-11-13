@@ -58,12 +58,7 @@ def imageTagPush(String image_name) {
 }
 
 def hubLogin() {
-    try {
-        sh "docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASSWORD"
-    }
-    catch (exc) {
-        echo "Unable to login to DockerHub!"
-    }
+    sh "docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASSWORD"
 }
 
 return this
