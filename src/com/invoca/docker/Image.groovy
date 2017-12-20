@@ -17,6 +17,10 @@ class Image implements Serializable {
     this(script, imageName, [tag], baseDir)
   }
 
+  public Image(Script script, String imageName, ArrayList tags, String baseDir = ".") {
+    this(script, imageName, tags as String[], baseDir)
+  }
+
   public Image(Script script, String imageName, String[] tags, String baseDir = ".") {
     this.script = script
     this.imageName = imageName
