@@ -1,4 +1,5 @@
 def call(body) {
+  def uuid = UUID.randomUUID().toString()
   def pipelineParams= [:]
   body.resolveStrategy = Closure.DELEGATE_FIRST
   body.delegate = pipelineParams
@@ -8,7 +9,12 @@ def call(body) {
     agent none
 
     environment {
-      SSH_KEY = credentials('github-ssh-key')
+      GITHUB_SSH_KEY = credentials('github-ssh-key')
+      TEST_KITCHEN_SSH_KEY = credentials('test-kitchen-ssh-key')
+      AWS_CREDENTIALS = credentials('aws-test-kitchen')
+      AWS_ACCESS_KEY_ID = "${env.AWS_CREDENTIALS_USR}"
+      AWS_SECRET_ACCESS_KEY = "${env.AWS_CREDENTIALS_PSW}"
+      AWS_DEFAULT_REGION = 'us-east-1'
     }
     stages {
       stage('Run tests') {
@@ -16,7 +22,7 @@ def call(body) {
           stage('Run unit tests') {
             agent {
               kubernetes {
-                label 'leroy-unit'
+                label "leroy-unit-${uuid}"
                 containerTemplate {
                   name 'ruby'
                   image 'ruby:2.3-jessie'
@@ -29,20 +35,20 @@ def call(body) {
               container('ruby') {
                 sh """
                   eval `ssh-agent -s`
-                  echo "$SSH_KEY" | ssh-add -
+                  echo "$GITHUB_SSH_KEY" | ssh-add -
                   mkdir -p /root/.ssh
                   ssh-keyscan -t rsa github.com > /root/.ssh/known_hosts
                   bundle install
                   bundle exec berks install
+                  bundle exec rake jenkins:unit
                   """
-                sh "bundle exec rake jenkins:unit"
               }
             }
           }
           stage('Run integration tests') {
             agent {
               kubernetes {
-                label 'leroy-integration'
+                label "leroy-integration-${uuid}"
                 containerTemplate {
                   name 'ruby'
                   image 'ruby:2.3-jessie'
@@ -55,13 +61,14 @@ def call(body) {
               container('ruby') {
                 sh """
                   eval `ssh-agent -s`
-                  echo "$SSH_KEY" | ssh-add -
+                  echo "$GITHUB_SSH_KEY" | ssh-add -
+                  echo "$TEST_KITCHEN_SSH_KEY" | ssh-add -
                   mkdir -p /root/.ssh
                   ssh-keyscan -t rsa github.com > /root/.ssh/known_hosts
                   bundle install
                   bundle exec berks install
+                  bundle exec rake jenkins:integration
                   """
-                sh "bundle exec rake jenkins:integration"
               }
             }
           }
