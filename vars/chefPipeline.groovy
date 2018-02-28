@@ -35,7 +35,7 @@ def call(body) {
                   bundle install
                   bundle exec berks install
                   """
-                sh "bundle exec rake test:unit"
+                sh "bundle exec rake jenkins:unit"
               }
             }
           }
@@ -61,7 +61,7 @@ def call(body) {
                   bundle install
                   bundle exec berks install
                   """
-                sh "bundle exec rake test:integration"
+                sh "bundle exec rake jenkins:integration"
               }
             }
           }
