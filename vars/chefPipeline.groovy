@@ -1,9 +1,12 @@
-def call(body) {
+def call(Closure body = null) {
   def uuid = UUID.randomUUID().toString()
   def pipelineParams= [:]
-  body.resolveStrategy = Closure.DELEGATE_FIRST
-  body.delegate = pipelineParams
-  body()
+
+  if (body != null) {
+    body.resolveStrategy = Closure.DELEGATE_FIRST
+    body.delegate = pipelineParams
+    body()
+  }
 
   pipeline {
     agent none
