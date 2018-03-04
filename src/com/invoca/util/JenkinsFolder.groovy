@@ -3,15 +3,10 @@ package com.invoca.util
 import com.cloudbees.hudson.plugins.folder.Folder
 import hudson.model.AbstractProject
 
-class FolderContents {
+class JenkinsFolder {
   def folderName
 
-  def static getProjectNames(folderName) {
-    def folderContents = new FolderContents(folderName)
-    folderContents.getProjectNames()
-  }
-
-  FolderContents(folderName) {
+  JenkinsFolder(folderName) {
     this.folderName = folderName
   }
 
