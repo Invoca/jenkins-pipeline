@@ -6,6 +6,11 @@ import hudson.model.AbstractProject
 class FolderContents {
   def folderName
 
+  def static getProjectNames(folderName) {
+    def folderContents = new FolderContents(folderName)
+    folderContents.getProjectNames()
+  }
+
   FolderContents(folderName) {
     this.folderName = folderName
   }
