@@ -72,6 +72,7 @@ def call(Closure body = null) {
                   bundle install
                   bundle exec berks install
                   bundle exec rake jenkins:integration
+                  bundle exec kitchen destroy
                   """
               }
             }
