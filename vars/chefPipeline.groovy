@@ -60,6 +60,7 @@ def call(Closure body = null) {
                 }
               }
             }
+            options { retry(3) }
             steps {
               container('ruby') {
                 sh """
