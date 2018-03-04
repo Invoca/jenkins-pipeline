@@ -61,20 +61,21 @@ def call(Closure body = null) {
                 }
               }
             }
-            options { retry(3) }
             steps {
-              container('ruby') {
-                sh """
-                  eval `ssh-agent -s`
-                  echo "$GITHUB_SSH_KEY" | ssh-add -
-                  echo "$TEST_KITCHEN_SSH_KEY" | ssh-add -
-                  mkdir -p /root/.ssh
-                  ssh-keyscan -t rsa github.com > /root/.ssh/known_hosts
-                  gem update --system 2.7.5 # Downgrade rubygems until all cookbooks with invalid tar headers are fixed
-                  bundle install
-                  bundle exec berks install
-                  bundle exec rake jenkins:integration
-                  """
+              retry(3) {
+                container('ruby') {
+                  sh """
+                    eval `ssh-agent -s`
+                    echo "$GITHUB_SSH_KEY" | ssh-add -
+                    echo "$TEST_KITCHEN_SSH_KEY" | ssh-add -
+                    mkdir -p /root/.ssh
+                    ssh-keyscan -t rsa github.com > /root/.ssh/known_hosts
+                    gem update --system 2.7.5 # Downgrade rubygems until all cookbooks with invalid tar headers are fixed
+                    bundle install
+                    bundle exec berks install
+                    bundle exec rake jenkins:integration
+                    """
+                }
               }
             }
           }
