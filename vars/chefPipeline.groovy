@@ -31,6 +31,8 @@ def call(Closure body = null) {
                   image 'ruby:2.3-jessie'
                   ttyEnabled true
                   command 'cat'
+                  resourceRequestCpu '500m'
+                  resourceLimitMemory '1Gi'
                 }
               }
             }
@@ -58,6 +60,8 @@ def call(Closure body = null) {
                   image 'ruby:2.3-jessie'
                   ttyEnabled true
                   command 'cat'
+                  resourceRequestCpu '500m'
+                  resourceLimitMemory '500Mi'
                 }
               }
             }
