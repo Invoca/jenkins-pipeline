@@ -1,4 +1,7 @@
 def call(Closure body = null) {
+  def TEST_RUNNER_CONTAINER_NAME = 'chef'
+  def TEST_RUNNER_IMAGE_NAME = 'invocaops/chef-ci:master'
+
   def uuid = UUID.randomUUID().toString()
   def pipelineParams= [:]
 
@@ -27,8 +30,8 @@ def call(Closure body = null) {
               kubernetes {
                 label "leroy-unit-${uuid}"
                 containerTemplate {
-                  name 'ruby'
-                  image 'invocaops/chef-ci:master'
+                  name TEST_RUNNER_CONTAINER_NAME
+                  image TEST_RUNNER_IMAGE_NAME
                   alwaysPullImage true
                   ttyEnabled true
                   command 'cat'
@@ -38,7 +41,7 @@ def call(Closure body = null) {
               }
             }
             steps {
-              container('ruby') {
+              container(TEST_RUNNER_CONTAINER_NAME) {
                 sh """
                   eval `ssh-agent -s`
                   echo "$GITHUB_SSH_KEY" | ssh-add -
@@ -56,8 +59,8 @@ def call(Closure body = null) {
               kubernetes {
                 label "leroy-integration-${uuid}"
                 containerTemplate {
-                  name 'ruby'
-                  image 'invocaops/chef-ci:master'
+                  name TEST_RUNNER_CONTAINER_NAME
+                  image TEST_RUNNER_IMAGE_NAME
                   alwaysPullImage true
                   ttyEnabled true
                   command 'cat'
@@ -68,7 +71,7 @@ def call(Closure body = null) {
             }
             steps {
               retry(3) {
-                container('ruby') {
+                container(TEST_RUNNER_CONTAINER_NAME) {
                   sh """
                     eval `ssh-agent -s`
                     echo "$GITHUB_SSH_KEY" | ssh-add -
