@@ -4,6 +4,7 @@ package com.invoca.docker
 class Image implements Serializable {
   public static String LABEL_SCHEMA_VERSION = "org.label-schema.schema-version"
   public static String LABEL_BUILD_DATE = "org.label-schema.build-date"
+  public static String LABEL_VCS_REF = "org.label-schema.vcs-ref"
   public static String LABEL_VCS_URL = "org.label-schema.vcs-url"
 
   private String imageName
@@ -32,10 +33,11 @@ class Image implements Serializable {
     this.imageNameWithTags = buildImageNameWithTags()
 
     def gitUrl = args.gitUrl
+    def gitRef = args.gitRef
     def buildArgs = args.buildArgs ?: [:]
     def dockerFile = args.dockerFile ?: "Dockerfile"
 
-    sh buildCommand(gitUrl, buildArgs, "${this.baseDir}/${dockerFile}")
+    sh buildCommand(gitUrl, gitRef, buildArgs, "${this.baseDir}/${dockerFile}")
     this
   }
 
@@ -66,10 +68,10 @@ class Image implements Serializable {
     this.script.sh(args)
   }
 
-  private String buildCommand(String gitUrl, Map buildArgs, String dockerFile) {
+  private String buildCommand(String gitUrl, String gitRef, Map buildArgs, String dockerFile) {
     def buildArgList = buildArgs.collect { k, v -> "--build-arg ${k}=\"${v}\"" }
 
-    "docker build --pull -t ${this.imageName}:${baseTag()} -f ${dockerFile} ${getLabels(gitUrl).join(" ")} ${buildArgList.join(" ")} ${this.baseDir}"
+    "docker build --pull -t ${this.imageName}:${baseTag()} -f ${dockerFile} ${getLabels(gitUrl, gitRef).join(" ")} ${buildArgList.join(" ")} ${this.baseDir}"
   }
 
   private String tagCommand(String imageNameWithTag) {
@@ -96,10 +98,11 @@ class Image implements Serializable {
     this.tags.collect { "${this.imageName}:${sanitizeTag(it)}" }
   }
 
-  private String[] getLabels(String gitUrl) {
+  private String[] getLabels(String gitUrl, String gitRef) {
     [
       (LABEL_SCHEMA_VERSION): "1.0",
       (LABEL_BUILD_DATE): currentDate(),
+      (LABEL_VCS_REF): gitRef,
       (LABEL_VCS_URL): gitUrl
     ].collect { k, v -> "--label ${k}=${v}" }
   }
