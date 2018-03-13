@@ -3,7 +3,7 @@ def call(Closure body = null) {
   def TEST_RUNNER_IMAGE_NAME = 'invocaops/chef-ci:master'
 
   def uuid = UUID.randomUUID().toString()
-  def pipelineParams= [:]
+  def pipelineParams = [:]
 
   if (body != null) {
     body.resolveStrategy = Closure.DELEGATE_FIRST
