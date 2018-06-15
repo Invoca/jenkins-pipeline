@@ -8,6 +8,7 @@ import java.util.logging.Logger
 
 class GitHubStatus implements Serializable {
   final static String GITHUB_API_URL_TEMPLATE = "https://api.github.com/repos/%s/statuses/%s"
+  final static String LOGGER_NAMESPACE = "com.invoca.github.githubstatus"
 
   private String context
   private String description
@@ -17,6 +18,12 @@ class GitHubStatus implements Serializable {
   private String targetURL
   private String token
   private Logger logger
+
+  static void update(Map config) {
+    def statusUpdater = new GitHubStatus(config)
+    statusUpdater.logger = Logger.getLogger(LOGGER_NAMESPACE)
+    statusUpdater.update()
+  }
 
   void update() {
     logInfo("Attempting to set GitHub status to %s for %s/%s", status, repoSlug, sha)
@@ -34,12 +41,8 @@ class GitHubStatus implements Serializable {
     logInfo("Received response: %d %s", connection.getResponseCode(), connection.getResponseMessage())
   }
 
-  void logInfo(String format, Object... args) {
-    getLogger().info(String.format(format, args))
-  }
-
-  private Logger getLogger() {
-    this.logger = this.logger ?: Logger.getLogger("com.invoca.github.githubstatus")
+  private void logInfo(String format, Object... args) {
+    logger.info(String.format(format, args))
   }
 
   private URL buildGitHubURL() {

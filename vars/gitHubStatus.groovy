@@ -7,5 +7,5 @@ def call(Closure body) {
   body.delegate = config
   body()
 
-  new GitHubStatus(config).update()
+  GitHubStatus.update(config)
 }
