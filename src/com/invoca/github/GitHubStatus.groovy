@@ -17,16 +17,14 @@ class GitHubStatus implements Serializable {
   private String status
   private String targetURL
   private String token
-  private Logger logger
+  private Script script
 
   static void update(Map config) {
-    def statusUpdater = new GitHubStatus(config)
-    statusUpdater.logger = Logger.getLogger(LOGGER_NAMESPACE)
-    statusUpdater.update()
+    new GitHubStatus(config).update()
   }
 
   void update() {
-    logInfo("Attempting to set GitHub status to %s for %s/%s", status, repoSlug, sha)
+    log("Attempting to set GitHub status to %s for %s/%s", status, repoSlug, sha)
 
     HttpURLConnection connection = (HttpURLConnection) buildGitHubURL().openConnection()
     connection.setRequestMethod("POST")
@@ -38,11 +36,11 @@ class GitHubStatus implements Serializable {
     writer.write(getPayload())
     writer.flush()
 
-    logInfo("Received response: %d %s", connection.getResponseCode(), connection.getResponseMessage())
+    log("Received response: %d %s", connection.getResponseCode(), connection.getResponseMessage())
   }
 
-  private void logInfo(String format, Object... args) {
-    logger.info(String.format(format, args))
+  private void log(String format, Object... args) {
+    script.println(String.format(format, args))
   }
 
   private URL buildGitHubURL() {
