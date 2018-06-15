@@ -5,6 +5,7 @@ import java.net.HttpURLConnection
 import java.net.*
 import groovy.json.JsonOutput
 import java.util.logging.Logger
+import hudson.AbortException
 
 class GitHubStatus implements Serializable {
   final static String GITHUB_API_URL_TEMPLATE = "https://api.github.com/repos/%s/statuses/%s"
@@ -26,6 +27,21 @@ class GitHubStatus implements Serializable {
   void update() {
     log("Attempting to set GitHub status to %s for %s/%s", status, repoSlug, sha)
 
+    def connection = buildHttpConnection()
+    def responseMessage = String.format("%d %s", connection.getResponseCode(), connection.getResponseMessage())
+
+    if (connection.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
+      log("Received response: %s", responseMessage)
+    } else {
+      abort(responseMessage)
+    }
+  }
+
+  private void log(String format, Object... args) {
+    script.println(String.format(format, args))
+  }
+
+  private HttpURLConnection buildHttpConnection() {
     HttpURLConnection connection = (HttpURLConnection) buildGitHubURL().openConnection()
     connection.setRequestMethod("POST")
     connection.setRequestProperty("Content-Type", "application/json")
@@ -36,11 +52,7 @@ class GitHubStatus implements Serializable {
     writer.write(getPayload())
     writer.flush()
 
-    log("Received response: %d %s", connection.getResponseCode(), connection.getResponseMessage())
-  }
-
-  private void log(String format, Object... args) {
-    script.println(String.format(format, args))
+    connection
   }
 
   private URL buildGitHubURL() {
@@ -56,5 +68,9 @@ class GitHubStatus implements Serializable {
     ]
 
     JsonOutput.toJson(payload)
+  }
+
+  private void abort(String msg) {
+    throw new AbortException("Failed to set GitHub status: " + msg)
   }
 }
