@@ -4,7 +4,6 @@ package com.invoca.github
 import java.net.HttpURLConnection
 import java.net.*
 import groovy.json.JsonOutput
-import java.util.logging.Logger
 import hudson.AbortException
 
 class GitHubStatus implements Serializable {
