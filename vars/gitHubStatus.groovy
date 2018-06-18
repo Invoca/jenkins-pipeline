@@ -1,11 +1,6 @@
 import com.invoca.github.GitHubStatus
 
-def call(Closure body) {
-  def config = [script: this]
-
-  body.resolveStrategy = Closure.DELEGATE_FIRST
-  body.delegate = config
-  body()
-
+def call(Map<String, Object> config) {
+  config.script = this
   GitHubStatus.update(config)
 }
