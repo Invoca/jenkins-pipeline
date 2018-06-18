@@ -57,7 +57,7 @@ class GitHubStatus implements Serializable {
     new URI(String.format(GITHUB_API_URL_TEMPLATE, repoSlug, sha)).toURL()
   }
 
-  private String getPayload(String state) {
+  private String getPayload() {
     def payload = [
       state: status,
       target_url: targetURL,
