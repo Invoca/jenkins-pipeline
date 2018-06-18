@@ -8,7 +8,6 @@ import hudson.AbortException
 
 class GitHubStatus implements Serializable {
   final static String GITHUB_API_URL_TEMPLATE = "https://api.github.com/repos/%s/statuses/%s"
-  final static String LOGGER_NAMESPACE = "com.invoca.github.githubstatus"
 
   private String context
   private String description
@@ -24,7 +23,7 @@ class GitHubStatus implements Serializable {
   }
 
   void update() {
-    log("Attempting to set GitHub status to %s for %s/%s", status, repoSlug, sha)
+    log("Attempting to set GitHub status to '%s' for: %s/%s", status, repoSlug, sha)
 
     def connection = buildHttpConnection()
     def responseMessage = String.format("%d %s", connection.getResponseCode(), connection.getResponseMessage())
