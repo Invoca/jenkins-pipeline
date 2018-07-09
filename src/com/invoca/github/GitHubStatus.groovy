@@ -18,11 +18,15 @@ class GitHubStatus implements Serializable {
   private String token
   private Script script
 
-  static void update(Map config) {
-    new GitHubStatus(config).update()
+  public GitHubStatus(Script script, String repoSlug, String sha, String targetURL, String token) {
+    this.script = script
+    this.repoSlug = repoSlug
+    this.sha = sha
+    this.targetURL = targetURL
+    this.token = token
   }
 
-  void update() {
+  public void setStatus(String context, String status, String description) {
     log("Attempting to set GitHub status to '%s' for: %s/%s", status, repoSlug, sha)
 
     def connection = buildHttpConnection()
