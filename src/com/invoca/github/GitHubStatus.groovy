@@ -46,7 +46,7 @@ class GitHubStatus implements Serializable {
   }
 
   private String buildGitHubResource() {
-    new String.format(GITHUB_API_URL_TEMPLATE, sha)
+    String.format(GITHUB_API_URL_TEMPLATE, sha)
   }
 
   private String buildPayload(String status) {
