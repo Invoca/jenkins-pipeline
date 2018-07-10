@@ -24,7 +24,7 @@ class GitHubStatus implements Serializable {
 
   public GitHubStatus(Map config) {
     def githubApi = new GitHubApi(config.script, config.repoSlug, config.token)
-    new GitHubStatus(githubAPI, config).update(config.status)
+    this(githubAPI, config)
   }
 
   public GitHubStatus(GitHubApi githubAPI, Map config) {
