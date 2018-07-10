@@ -1,6 +1,10 @@
 import com.invoca.github.GitHubStatus
 
-def call(Map<String, Object> config) {
+GitHubStatus call(Map<String, Object> config) {
   config.script = this
-  GitHubStatus.update(config)
+  def github_status = new GitHubStatus(config)
+  if (config.status != null) {
+    github_status.update(config.status)
+  }
+  return github_status
 }
