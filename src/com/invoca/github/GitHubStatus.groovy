@@ -6,58 +6,50 @@ import java.net.*
 import groovy.json.JsonOutput
 import hudson.AbortException
 
+import com.invoca.github.GitHubApi
+
 class GitHubStatus implements Serializable {
-  final static String GITHUB_API_URL_TEMPLATE = "https://api.github.com/repos/%s/statuses/%s"
+  final static String GITHUB_API_URL_TEMPLATE = "statuses/%s"
 
   private String context
   private String description
-  private String repoSlug
   private String sha
-  private String status
   private String targetURL
-  private String token
   private Script script
+  private GitHubApi githubAPI
 
   static void update(Map config) {
-    new GitHubStatus(config).update()
+    GitHubStatus.fromConfig(config).update(config.status)
   }
 
-  void update() {
-    log("Attempting to set GitHub status to '%s' for: %s/%s", status, repoSlug, sha)
+  static GitHubStatus fromConfig(Map config) {
+    def githubApi = new GitHubApi(config.script, config.repoSlug, config.token)
+    return new GitHubStatus(githubApi, config)
+  }
 
-    def connection = buildHttpConnection()
-    def responseMessage = String.format("%d %s", connection.getResponseCode(), connection.getResponseMessage())
+  public GitHubStatus(GitHubApi githubAPI, Map config) {
+    this.script = config.script
+    this.githubAPI = githubAPI
+    this.sha = config.sha
+    this.context = config.context
+    this.description = config.description
+    this.targetURL = config.targetURL
+  }
 
-    if (connection.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
-      log("Received response: %s", responseMessage)
-    } else {
-      abort(responseMessage)
-    }
+  public void update(String status) {
+    log("Attempting to set GitHub status to %s='%s' for %s", context, status, sha)
+    githubApi.post(buildGitHubResource(), buildPayload(status))
   }
 
   private void log(String format, Object... args) {
     script.println(String.format(format, args))
   }
 
-  private HttpURLConnection buildHttpConnection() {
-    HttpURLConnection connection = (HttpURLConnection) buildGitHubURL().openConnection()
-    connection.setRequestMethod("POST")
-    connection.setRequestProperty("Content-Type", "application/json")
-    connection.setRequestProperty("Authorization", "token " + token)
-    connection.setDoOutput(true)
-
-    OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8")
-    writer.write(getPayload())
-    writer.flush()
-
-    connection
+  private String buildGitHubResource() {
+    String.format(GITHUB_API_URL_TEMPLATE, sha)
   }
 
-  private URL buildGitHubURL() {
-    new URI(String.format(GITHUB_API_URL_TEMPLATE, repoSlug, sha)).toURL()
-  }
-
-  private String getPayload() {
+  private String buildPayload(String status) {
     def payload = [
       state: status,
       target_url: targetURL,
