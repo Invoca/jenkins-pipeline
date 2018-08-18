@@ -1,6 +1,6 @@
 def call(Closure body = null) {
   def TEST_RUNNER_CONTAINER_NAME = 'chef'
-  def TEST_RUNNER_IMAGE_NAME = 'invocaops/chef-ci:master'
+  def TEST_RUNNER_IMAGE_NAME = 'invocaops/chef-ci:PR-2'
 
   def uuid = UUID.randomUUID().toString()
   def pipelineParams = [:]
