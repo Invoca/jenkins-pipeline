@@ -70,7 +70,7 @@ def call(Closure body = null) {
               }
             }
             steps {
-              retry(3) {
+              retry(0) {
                 container(TEST_RUNNER_CONTAINER_NAME) {
                   sh """
                     eval `ssh-agent -s`
@@ -80,7 +80,6 @@ def call(Closure body = null) {
                     ssh-keyscan -t rsa github.com > /root/.ssh/known_hosts
                     bundle install
                     bundle exec berks install
-                    bundle exec rake jenkins:integration
                     """
                 }
               }
