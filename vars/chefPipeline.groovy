@@ -78,8 +78,8 @@ def call(Closure body = null) {
                     echo "$TEST_KITCHEN_SSH_KEY" | ssh-add -
                     mkdir -p /root/.ssh
                     ssh-keyscan -t rsa github.com > /root/.ssh/known_hosts
-                    bundle install
                     bundle exec berks install
+                    bundle exec rake jenkins:integration
                     """
                 }
               }
