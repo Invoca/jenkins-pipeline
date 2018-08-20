@@ -1,6 +1,6 @@
 def call(Closure body = null) {
   def TEST_RUNNER_CONTAINER_NAME = 'chef'
-  def TEST_RUNNER_IMAGE_NAME = 'invocaops/chef-ci:master'
+  def TEST_RUNNER_IMAGE_NAME = 'invocaops/chef-ci:PR-2'
 
   def uuid = UUID.randomUUID().toString()
   def pipelineParams = [:]
@@ -70,7 +70,7 @@ def call(Closure body = null) {
               }
             }
             steps {
-              retry(3) {
+              retry(0) {
                 container(TEST_RUNNER_CONTAINER_NAME) {
                   sh """
                     eval `ssh-agent -s`
