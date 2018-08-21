@@ -48,7 +48,7 @@ def call(Closure body = null) {
                   mkdir -p /root/.ssh
                   ssh-keyscan -t rsa github.com > /root/.ssh/known_hosts
                   bundle install
-                  bundle exec berks install
+                  berks install
                   bundle exec rake jenkins:unit
                   """
               }
@@ -79,7 +79,7 @@ def call(Closure body = null) {
                     mkdir -p /root/.ssh
                     ssh-keyscan -t rsa github.com > /root/.ssh/known_hosts
                     bundle install
-                    bundle exec berks install
+                    berks install
                     bundle exec rake jenkins:integration
                     """
                 }
