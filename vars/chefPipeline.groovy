@@ -36,7 +36,7 @@ def call(Closure body = null) {
                   ttyEnabled true
                   command 'cat'
                   resourceRequestCpu '500m'
-                  resourceLimitMemory '1Gi'
+                  resourceLimitMemory '1500Mi'
                 }
               }
             }
