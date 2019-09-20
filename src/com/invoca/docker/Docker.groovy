@@ -6,7 +6,7 @@ def hubLogin(String username, String password) {
 
 def imageExistsLocally(String imageWithTag) {
   // Will return empty string if no matching image is found
-  return (sh "docker images -q ${imageWithTag}").trim() == ""
+  return sh("docker images -q ${imageWithTag}").trim() == ""
 }
 
 def downloadImage(String imageWithTag) {
