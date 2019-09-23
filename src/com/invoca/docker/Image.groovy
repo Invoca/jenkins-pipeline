@@ -1,6 +1,8 @@
 #!/usr/bin/groovy
 package com.invoca.docker
 
+import com.cloudbees.groovy.cps.NonCPS
+
 class Image implements Serializable {
   public static String LABEL_SCHEMA_VERSION = "org.label-schema.schema-version"
   public static String LABEL_BUILD_DATE = "org.label-schema.build-date"
@@ -91,6 +93,7 @@ class Image implements Serializable {
     tag.replaceAll("[/:]", "_")
   }
 
+  @NonCPS
   private String[] buildImageNameWithTags() {
     this.tags.collect { "${this.imageName}:${sanitizeTag(it)}" }
   }
