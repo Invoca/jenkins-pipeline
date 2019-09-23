@@ -26,7 +26,7 @@ class Image implements Serializable {
     this.imageName = imageName
     this.tags = tags
     this.baseDir = baseDir
-    this.imageNameWithTags = buildImageNameWithTags()
+    this.imageNameWithTags = this.buildImageNameWithTags()
   }
 
   public Image build(Map args) {
