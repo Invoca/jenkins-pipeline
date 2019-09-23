@@ -26,11 +26,10 @@ class Image implements Serializable {
     this.imageName = imageName
     this.tags = tags
     this.baseDir = baseDir
+    this.imageNameWithTags = buildImageNameWithTags()
   }
 
   public Image build(Map args) {
-    this.imageNameWithTags = buildImageNameWithTags()
-
     def gitUrl = args.gitUrl
     def buildArgs = args.buildArgs ?: [:]
     def dockerFile = args.dockerFile ?: "Dockerfile"
