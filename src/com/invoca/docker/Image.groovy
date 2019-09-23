@@ -29,7 +29,7 @@ class Image implements Serializable {
   }
 
   public Image build(Map args) {
-    this.imageNameWithTags = buildImageNameWithTags()
+    this.imageNameWithTags = this.buildImageNameWithTags()
 
     def gitUrl = args.gitUrl
     def buildArgs = args.buildArgs ?: [:]
@@ -40,6 +40,8 @@ class Image implements Serializable {
   }
 
   public Image tag() {
+    this.imageNameWithTags = this.buildImageNameWithTags()
+
     if (this.imageNameWithTags.size() > 1) {
       for (int i = 1; i < this.imageNameWithTags.size(); i++) {
         sh tagCommand(this.imageNameWithTags[i])
