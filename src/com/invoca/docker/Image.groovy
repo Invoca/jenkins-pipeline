@@ -1,8 +1,6 @@
 #!/usr/bin/groovy
 package com.invoca.docker
 
-import com.cloudbees.groovy.cps.NonCPS
-
 class Image implements Serializable {
   public static String LABEL_SCHEMA_VERSION = "org.label-schema.schema-version"
   public static String LABEL_BUILD_DATE = "org.label-schema.build-date"
@@ -28,10 +26,11 @@ class Image implements Serializable {
     this.imageName = imageName
     this.tags = tags
     this.baseDir = baseDir
-    this.imageNameWithTags = this.buildImageNameWithTags()
   }
 
   public Image build(Map args) {
+    this.imageNameWithTags = this.buildImageNameWithTags()
+
     def gitUrl = args.gitUrl
     def buildArgs = args.buildArgs ?: [:]
     def dockerFile = args.dockerFile ?: "Dockerfile"
@@ -41,6 +40,8 @@ class Image implements Serializable {
   }
 
   public Image tag() {
+    this.imageNameWithTags = this.buildImageNameWithTags()
+
     if (this.imageNameWithTags.size() > 1) {
       for (int i = 1; i < this.imageNameWithTags.size(); i++) {
         sh tagCommand(this.imageNameWithTags[i])
@@ -93,7 +94,6 @@ class Image implements Serializable {
     tag.replaceAll("[/:]", "_")
   }
 
-  @NonCPS
   private String[] buildImageNameWithTags() {
     this.tags.collect { "${this.imageName}:${sanitizeTag(it)}" }
   }
