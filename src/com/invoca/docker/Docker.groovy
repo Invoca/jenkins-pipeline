@@ -13,7 +13,7 @@ def downloadImage(String imageWithTag) {
 }
 
 def getImage(String imageWithTag) {
-  // Try downloading image from remote if not found locally.
+  // Check if image is present locally, or try downloading it from remote.
   // Return true if image is now present locally, false otherwise.
   return imageExistsLocally(imageWithTag) || downloadImage(imageWithTag)
 }
