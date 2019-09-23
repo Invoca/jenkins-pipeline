@@ -9,6 +9,6 @@ class FileUtil {
   }
 
   def sha256sum(ArrayList filePaths) {
-    return this.script.sh(script: "cat ${filePaths.join(" ")} | sha256sum", returnOutput: true).trim()
+    return this.script.sh(script: "cat ${filePaths.join(" ")} | sha256sum -b | cut -d ' ' -f 1", returnStdout: true).trim()
   }
 }
