@@ -46,7 +46,7 @@ class GitHubApi implements Serializable {
   }
 
   private URL buildGitHubURL(String resource) {
-    new URI(String.format(GITHUB_API_URL_TEMPLATE, this.repoSlug, resource))
+    new URI(String.format(GITHUB_API_URL_TEMPLATE, this.repoSlug, resource)).toURL()
   }
 
   private void log(String format, Object... args) {
