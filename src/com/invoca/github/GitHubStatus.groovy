@@ -38,7 +38,7 @@ class GitHubStatus implements Serializable {
 
   public void update(String status) {
     log("Attempting to set GitHub status to %s='%s' for %s", context, status, sha)
-    this.githubApi.post(buildGitHubResource(), buildPayload(status))
+    this.githubAPI.post(buildGitHubResource(), buildPayload(status))
   }
 
   private void log(String format, Object... args) {
