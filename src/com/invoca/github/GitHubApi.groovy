@@ -43,6 +43,7 @@ class GitHubApi implements Serializable {
     HttpURLConnection connection = (HttpURLConnection) buildGitHubURL(resource).openConnection()
     connection.setRequestProperty("Authorization", "token " + token)
     connection.setDoOutput(true)
+    return connection
   }
 
   private URL buildGitHubURL(String resource) {
