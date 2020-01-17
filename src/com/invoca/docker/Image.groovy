@@ -34,8 +34,9 @@ class Image implements Serializable {
     def gitUrl = args.gitUrl
     def buildArgs = args.buildArgs ?: [:]
     def dockerFile = args.dockerFile ?: "Dockerfile"
+    def target = args.target ?: null
 
-    sh buildCommand(gitUrl, buildArgs, "${this.baseDir}/${dockerFile}")
+    sh buildCommand(gitUrl, buildArgs, "${this.baseDir}/${dockerFile}", target)
     this
   }
 
@@ -68,10 +69,23 @@ class Image implements Serializable {
     this.script.sh(args)
   }
 
-  private String buildCommand(String gitUrl, Map buildArgs, String dockerFile) {
+  private String buildCommand(String gitUrl, Map buildArgs, String dockerFile, String target) {
     def buildArgList = buildArgs.collect { k, v -> "--build-arg ${k}=\"${v}\"" }
+    def command = [
+      "docker",
+      "build",
+      "--pull",
+      "-t ${this.imageName}:${baseTag()}",
+      "-f ${dockerFile}"
+    ] + getLabels(gitUrl) + buildArgList
 
-    "docker build --pull -t ${this.imageName}:${baseTag()} -f ${dockerFile} ${getLabels(gitUrl).join(" ")} ${buildArgList.join(" ")} ${this.baseDir}"
+    if (target) {
+      command.add("--target ${target}")
+    }
+
+    command.add(this.baseDir)
+
+    return command.join(" ")
   }
 
   private String tagCommand(String imageNameWithTag) {
