@@ -37,9 +37,10 @@ The `Image#build` method takes a `Map` of build arguments.
 
 | Argument   | Type   | Required | Description                                          |
 |------------|--------|:--------:|------------------------------------------------------|
-| gitUrl     | String |     Y    | URL to remote Git repository.  Set to `env.GIT_URL`. | 
+| gitUrl     | String |     Y    | URL to remote Git repository.  Set to `env.GIT_URL`. |
 | buildArgs  | Map    |     N    | `foo=bar` pairings for `docker build --build-arg`.   |
 | dockerFile | String |     N    | Name of `Dockerfile` file, defaults to `Dockerfile`. |
+| target     | String |     N    | Target stage to build to in the docker build.        |
 
 ### Environment
 
