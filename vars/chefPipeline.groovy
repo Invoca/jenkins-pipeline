@@ -15,6 +15,7 @@ def call(Closure body = null) {
     agent none
 
     environment {
+      GEMFURY_TOKEN = credentials("gemfury-token")
       GITHUB_SSH_KEY = credentials('github-ssh-key')
       TEST_KITCHEN_SSH_KEY = credentials('test-kitchen-ssh-key')
       AWS_CREDENTIALS = credentials('aws-test-kitchen')
