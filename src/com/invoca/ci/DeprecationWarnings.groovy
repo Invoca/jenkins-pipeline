@@ -54,13 +54,13 @@ class DeprecationWarnings {
 
     this.testOutput.split("\n").each {
       if (it == UNEXPECTED_DEPRECATIONS_START) {
-        warnings << "=====\n" + UNEXPECTED_DEPRECATIONS_START
+        warnings.push("=====\n" + UNEXPECTED_DEPRECATIONS_START)
         withinUnexpectedDeprecationOutput = true
       } else if (withinUnexpectedDeprecationOutput && it == UNEXPECTED_DEPRECATIONS_END) {
-        warnings << it
+        warnings.push(it)
         withinUnexpectedDeprecationOutput = false
       } else if (withinUnexpectedDeprecationOutput || it.contains(DEPRECATION_WARNING_PREFIX)) {
-        warnings << it
+        warnings.push(it)
       }
     }
 
