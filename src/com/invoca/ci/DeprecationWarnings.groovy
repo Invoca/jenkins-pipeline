@@ -33,7 +33,7 @@ class DeprecationWarnings {
     githubStatusConfig.context = GITHUB_STATUS_CONTEXT
 
     if (this.warningsExist()) {
-      githubStatusConfig.targetUrl   = this.archiveWarnings()
+      githubStatusConfig.targetURL   = this.archiveWarnings()
       githubStatusConfig.status      = 'failure'
       githubStatusConfig.description = GITHUB_STATUS_FAILURE_MESSAGE
     } else {
