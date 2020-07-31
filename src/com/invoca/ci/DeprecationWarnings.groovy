@@ -49,18 +49,18 @@ class DeprecationWarnings {
   }
 
   private String extractWarnings() {
-    String[] warnings = []
+    List<String> warnings = new ArrayList<String>();
     boolean withinUnexpectedDeprecationOutput = false
 
     this.testOutput.split("\n").each {
       if (it == UNEXPECTED_DEPRECATIONS_START) {
-        warnings.push("=====\n" + UNEXPECTED_DEPRECATIONS_START)
+        warnings.add("=====\n" + UNEXPECTED_DEPRECATIONS_START)
         withinUnexpectedDeprecationOutput = true
       } else if (withinUnexpectedDeprecationOutput && it == UNEXPECTED_DEPRECATIONS_END) {
-        warnings.push(it)
+        warnings.add(it)
         withinUnexpectedDeprecationOutput = false
       } else if (withinUnexpectedDeprecationOutput || it.contains(DEPRECATION_WARNING_PREFIX)) {
-        warnings.push(it)
+        warnings.add(it)
       }
     }
 
