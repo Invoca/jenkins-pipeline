@@ -37,6 +37,7 @@ class DeprecationWarnings {
       githubStatusConfig.status      = 'failure'
       githubStatusConfig.description = GITHUB_STATUS_FAILURE_MESSAGE
     } else {
+      githubStatusConfig.targetURL   = this.script.env.RUN_DISPLAY_URL
       githubStatusConfig.status      = 'success'
       githubStatusConfig.description = GITHUB_STATUS_SUCCESS_MESSAGE
     }
