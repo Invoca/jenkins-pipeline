@@ -8,5 +8,6 @@ def call(String script, Map<String, Object> githubStatusConfig) {
   archiveArtifacts 'deprecation_warnings.txt'
 
   githubStatusConfig.script = this
+  githubStatusConfig.targetURL = env.BUILD_URL + "/artifact/deprecation_warnings.txt"
   DeprecationWarnings.checkAndUpdateGithub(testOutput, githubStatusConfig)
 }
