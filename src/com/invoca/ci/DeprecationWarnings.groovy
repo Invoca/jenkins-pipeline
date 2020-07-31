@@ -5,21 +5,73 @@ package com.invoca.ci
 import com.invoca.github.GitHubStatus
 
 class DeprecationWarnings {
-  static void checkAndUpdateGithub(String testOutput, Map<String, Object> githubStatusConfig) {
-    githubStatusConfig.context = 'deprecation-warning-check'
+  static void checkAndUpdateGithub(Script script, String testOutput, Map<String, Object> githubStatusConfig) {
+    (new DeprecationWarnings(script, testOutput, githubStatusConfig)).checkAndUpdateGithub()
+  }
 
-    if (check(testOutput)) {
+  public static String GITHUB_STATUS_CONTEXT         = 'deprecation-warning-check'
+  public static String GITHUB_STATUS_FAILURE_MESSAGE = 'Unexpected deprecation warnings encountered'
+  public static String GITHUB_STATUS_SUCCESS_MESSAGE = 'No unexpected deprecation warnings encountered'
+  public static String WARNINGS_ARCHIVE_FILE_NAME    = 'deprecation_warnings.txt'
+  public static String DEPRECATION_WARNING_PREFIX    = 'DEPRECATION WARNING'
+  public static String UNEXPECTED_DEPRECATIONS_START = 'Unexpected Deprecation Warnings Encountered'
+  public static String UNEXPECTED_DEPRECATIONS_END   = '====='
+
+  private Script script
+  private String testOutput
+  private Map<String, Object> githubStatusConfig
+
+  public DeprecationWarnings(Script script, String testOutput, Map<String, Object> githubStatusConfig) {
+    this.script             = script
+    this.testOutput         = testOutput
+    this.githubStatusConfig = githubStatusConfig
+  }
+
+  public void checkAndUpdateGithub() {
+    Map<String, Object> githubStatusConfig = this.githubStatusConfig
+
+    githubStatusConfig.context = GITHUB_STATUS_CONTEXT
+
+    if (this.warningsExist()) {
+      githubStatusConfig.targetUrl   = this.archiveWarnings()
       githubStatusConfig.status      = 'failure'
-      githubStatusConfig.description = 'Unexpected deprecation warnings encountered'
+      githubStatusConfig.description = GITHUB_STATUS_FAILURE_MESSAGE
     } else {
       githubStatusConfig.status      = 'success'
-      githubStatusConfig.description = 'No unexpected deprecation warnings encountered'
+      githubStatusConfig.description = GITHUB_STATUS_SUCCESS_MESSAGE
     }
 
     GitHubStatus.update(githubStatusConfig)
   }
 
-  static boolean check(String testOutput) {
-    return testOutput.contains("Unexpected Deprecation Warnings Encountered") || testOutput.contains("DEPRECATION WARNING")
+  public boolean warningsExist() {
+    return this.testOutput.contains(UNEXPECTED_DEPRECATIONS_START) || this.testOutput.contains(DEPRECATION_WARNING_PREFIX)
+  }
+
+  private String extractWarnings() {
+    String[] warnings = []
+    boolean withinUnexpectedDeprecationOutput = false
+
+    this.testOutput.split("\n").each {
+      if (it == UNEXPECTED_DEPRECATIONS_START) {
+        warnings << "=====\n" + UNEXPECTED_DEPRECATIONS_START
+        withinUnexpectedDeprecationOutput = true
+      } else if (withinUnexpectedDeprecationOutput && it == UNEXPECTED_DEPRECATIONS_END) {
+        warnings << it
+        withinUnexpectedDeprecationOutput = false
+      } else if (withinUnexpectedDeprecationOutput || it.contains(DEPRECATION_WARNING_PREFIX)) {
+        warnings << it
+      }
+    }
+
+    return warnings.join("\n")
+  }
+
+  // Archives the extracted warnings and returns the URL for the artifact
+  private String archiveWarnings() {
+    this.script.writeFile(file: WARNINGS_ARCHIVE_FILE_NAME, text: this.extractWarnings())
+    this.script.archiveArtifacts(WARNINGS_ARCHIVE_FILE_NAME)
+
+    return this.script.env.BUILD_URL + "/artifact/" + WARNINGS_ARCHIVE_FILE_NAME
   }
 }
