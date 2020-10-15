@@ -10,7 +10,7 @@ void call(String repo, String commit, String githubToken) {
   echo "Checking out ${commit}"
   sh "git init"
   sh "git remote add origin https://${githubToken}:x-oauth-basic@github.com/${repo}"
-  sh "git fetch -depth 1 origin ${commit}"
+  sh "git fetch --depth 1 origin ${commit}"
   sh "git checkout ${commit}"
   sh "git rev-parse HEAD"
 }
