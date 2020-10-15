@@ -10,7 +10,7 @@ void call(String s3Bucket, ArrayList<String> cacheKeys) {
 
   echo 'Pulling cache from AWS'
   Boolean cacheExists = false
-  cacheKeys.each { cacheKey ->
+  for (String cacheKey : cacheKeys) {
     String cacheTarball = "${cacheKey}.tar.gz"
     String cacheLocation = "s3://${s3Bucket}/jenkins_cache/${env.JOB_NAME.replaceAll("\\W", "")}/${cacheTarball}"
 
