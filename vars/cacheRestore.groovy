@@ -24,7 +24,7 @@ void call(String s3Bucket, ArrayList<String> cacheKeys) {
 
   if (cacheExists) {
     echo 'Unpacking cache tarball'
-    sh "tar -xzvf ${cacheTarball} ${itemsToCache.join(' ')}"
+    sh "tar -xzvf ${cacheTarball}"
 
     echo 'Cleaning up local cache tarball'
     sh "rm -rf ${cacheTarball}"
