@@ -4,7 +4,8 @@
  * @param
 */
 
-void call(String s3Bucket, ArrayList<String> cacheKeys) {
+void call(String s3Bucket, ArrayList<String> cacheKeys, Boolean global = false) {
+  String cacheDirectory = global ? "s3://${s3Bucket}/jenkins_cache" : "s3://${s3Bucket}/jenkins_cache/${env.JOB_NAME.replaceAll("\\W", "")}";
   // Verify that aws-cli is installed before proceeding
   sh 'which aws'
 
@@ -13,7 +14,7 @@ void call(String s3Bucket, ArrayList<String> cacheKeys) {
   String cacheTarball = ""
   for (String cacheKey : cacheKeys) {
     cacheTarball = "${cacheKey}.tar.gz"
-    String cacheLocation = "s3://${s3Bucket}/jenkins_cache/${env.JOB_NAME.replaceAll("\\W", "")}/${cacheTarball}"
+    String cacheLocation = "${cacheDirectory}/${cacheTarball}"
 
     cacheExists = sh(script: "aws s3 ls ${cacheLocation}", returnStatus: true) == 0
     if (cacheExists) {
