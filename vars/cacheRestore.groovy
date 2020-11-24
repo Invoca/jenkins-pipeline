@@ -32,6 +32,7 @@ void call(String s3Bucket, ArrayList<String> cacheKeys, Boolean global = false) 
         break;
       } catch(Exception ex) {
         echo "Error occurred while unpacking cache from ${cacheKey}"
+        echo "${ex.toString()}\n${ex.getStackTrace().join("\n")}"
         cacheExists = false
         sh "rm -rf ${cacheTarball}"
       }

@@ -21,6 +21,7 @@ void call(String s3Bucket, ArrayList<String> cacheKeys, ArrayList<String> itemsT
       sh "aws s3 cp ${cacheTarball} ${cacheLocation} --content-type application/x-gzip"
     } catch(Exception ex) {
       echo "Error occurred while pushing cache to ${cacheKey}"
+      echo "${ex.toString()}\n${ex.getStackTrace().join("\n")}"
     }
   }
 
