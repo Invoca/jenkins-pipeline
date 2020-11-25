@@ -18,20 +18,28 @@ void call(String s3Bucket, ArrayList<String> cacheKeys, Boolean global = false) 
 
     cacheExists = sh(script: "aws s3 ls ${cacheLocation}", returnStatus: true) == 0
     if (cacheExists) {
-      sh "aws s3 cp ${cacheLocation} ${cacheTarball} --content-type application/x-gzip"
-      break;
+      try {
+        echo "Found cache at key ${cacheKey}"
+        sh "aws s3 cp ${cacheLocation} ${cacheTarball} --content-type application/x-gzip"
+
+        echo "Unpacking cache tarball from ${cacheKey}"
+        sh "tar -xzf ${cacheTarball}"
+
+        echo "Cleaning up local cache tarball from ${cacheKey}"
+        sh "rm -rf ${cacheTarball}"
+
+        echo 'Cache restored!'
+        break;
+      } catch(Exception ex) {
+        echo "Error occurred while unpacking cache from ${cacheKey}"
+        echo "${ex.toString()}\n${ex.getStackTrace().join("\n")}"
+        cacheExists = false
+        sh "rm -rf ${cacheTarball}"
+      }
     }
   }
 
-  if (cacheExists) {
-    echo 'Unpacking cache tarball'
-    sh "tar -xzf ${cacheTarball}"
-
-    echo 'Cleaning up local cache tarball'
-    sh "rm -rf ${cacheTarball}"
-
-    echo 'Cache restored'
-  } else {
+  if (!cacheExists) {
     echo 'Unable to find cache stored for any of the provided keys'
   }
 }
