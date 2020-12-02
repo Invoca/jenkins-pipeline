@@ -5,8 +5,9 @@
 */
 
 void call(String s3Bucket, ArrayList<String> cacheKeys, ArrayList<String> itemsToCache, Boolean global = false) {
-  String cacheDirectory = global ? "s3://${s3Bucket}/jenkins_cache" : "s3://${s3Bucket}/jenkins_cache/${env.JOB_NAME.replaceAll("\\W", "")}";
-  String cacheTarball   = "${cacheKeys[0]}.tar.gz"
+  String cacheDirectory       = global ? "s3://${s3Bucket}/jenkins_cache" : "s3://${s3Bucket}/jenkins_cache/${env.JOB_NAME.replaceAll("\\W", "")}";
+  String serializedTarballKey = CacheUtil.sanitizeCacheKey(cacheKeys[0])
+  String cacheTarball         = "${serializedTarballKey}.tar.gz"
 
   // Verify that aws-cli is installed before proceeding
   sh 'which aws'
