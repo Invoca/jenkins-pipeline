@@ -3,6 +3,6 @@ package com.invoca.util
 
 class CacheUtil {
   static String sanitizeCacheKey(String cacheKey) {
-    return cacheKey.replaceAll("\\W", "");
+    return cacheKey.replaceAll("\\W", "-");
   }
 }
