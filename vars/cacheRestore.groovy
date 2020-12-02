@@ -4,6 +4,8 @@
  * @param
 */
 
+import com.invoca.util.CacheUtil
+
 void call(String s3Bucket, ArrayList<String> cacheKeys, Boolean global = false) {
   String cacheDirectory = global ? "s3://${s3Bucket}/jenkins_cache" : "s3://${s3Bucket}/jenkins_cache/${env.JOB_NAME.replaceAll("\\W", "")}";
   // Verify that aws-cli is installed before proceeding
@@ -13,7 +15,7 @@ void call(String s3Bucket, ArrayList<String> cacheKeys, Boolean global = false) 
   Boolean cacheExists = false
   String cacheTarball = ""
   for (String cacheKey : cacheKeys) {
-    String serializedCacheKey = cacheKey.replaceAll("\\W", "")
+    String serializedCacheKey = CacheUtil.sanitizeCacheKey(cacheKey)
     echo "Serialized cacheKey from ${cacheKey} => ${serializedCacheKey}"
 
     cacheTarball = "${serializedCacheKey}.tar.gz"

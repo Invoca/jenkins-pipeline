@@ -16,7 +16,7 @@ void call(String s3Bucket, ArrayList<String> cacheKeys, ArrayList<String> itemsT
 
   echo 'Pushing cache to AWS'
   cacheKeys.each { cacheKey ->
-    String serializedCacheKey = cacheKey.replaceAll("\\W", "")
+    String serializedCacheKey = CacheUtil.sanitizeCacheKey(cacheKey)
     echo "Serialized cacheKey from ${cacheKey} => ${serializedCacheKey}"
     try {
       String cacheLocation = "${cacheDirectory}/${serializedCacheKey}.tar.gz"
