@@ -4,6 +4,8 @@
  * @param
 */
 
+import com.invoca.util.CacheUtil
+
 void call(String s3Bucket, ArrayList<String> cacheKeys, ArrayList<String> itemsToCache, Boolean global = false) {
   String cacheDirectory       = global ? "s3://${s3Bucket}/jenkins_cache" : "s3://${s3Bucket}/jenkins_cache/${env.JOB_NAME.replaceAll("\\W", "")}";
   String serializedTarballKey = CacheUtil.sanitizeCacheKey(cacheKeys[0])
