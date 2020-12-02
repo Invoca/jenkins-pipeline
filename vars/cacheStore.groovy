@@ -16,11 +16,13 @@ void call(String s3Bucket, ArrayList<String> cacheKeys, ArrayList<String> itemsT
 
   echo 'Pushing cache to AWS'
   cacheKeys.each { cacheKey ->
+    String serializedCacheKey = cacheKey.replaceAll("\\W", "")
+    echo "Serialized cacheKey from ${cacheKey} => ${serializedCacheKey}"
     try {
-      String cacheLocation = "${cacheDirectory}/${cacheKey}.tar.gz"
+      String cacheLocation = "${cacheDirectory}/${serializedCacheKey}.tar.gz"
       sh "aws s3 cp ${cacheTarball} ${cacheLocation} --content-type application/x-gzip"
     } catch(Exception ex) {
-      echo "Error occurred while pushing cache to ${cacheKey}"
+      echo "Error occurred while pushing cache to ${serializedCacheKey}"
       echo "${ex.toString()}\n${ex.getStackTrace().join("\n")}"
     }
   }

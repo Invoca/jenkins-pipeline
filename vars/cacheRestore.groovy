@@ -13,25 +13,28 @@ void call(String s3Bucket, ArrayList<String> cacheKeys, Boolean global = false) 
   Boolean cacheExists = false
   String cacheTarball = ""
   for (String cacheKey : cacheKeys) {
-    cacheTarball = "${cacheKey}.tar.gz"
+    String serializedCacheKey = cacheKey.replaceAll("\\W", "")
+    echo "Serialized cacheKey from ${cacheKey} => ${serializedCacheKey}"
+
+    cacheTarball = "${serializedCacheKey}.tar.gz"
     String cacheLocation = "${cacheDirectory}/${cacheTarball}"
 
     cacheExists = sh(script: "aws s3 ls ${cacheLocation}", returnStatus: true) == 0
     if (cacheExists) {
       try {
-        echo "Found cache at key ${cacheKey}"
+        echo "Found cache at key ${serializedCacheKey}"
         sh "aws s3 cp ${cacheLocation} ${cacheTarball} --content-type application/x-gzip"
 
-        echo "Unpacking cache tarball from ${cacheKey}"
+        echo "Unpacking cache tarball from ${serializedCacheKey}"
         sh "tar -xzf ${cacheTarball}"
 
-        echo "Cleaning up local cache tarball from ${cacheKey}"
+        echo "Cleaning up local cache tarball from ${serializedCacheKey}"
         sh "rm -rf ${cacheTarball}"
 
         echo 'Cache restored!'
         break;
       } catch(Exception ex) {
-        echo "Error occurred while unpacking cache from ${cacheKey}"
+        echo "Error occurred while unpacking cache from ${serializedCacheKey}"
         echo "${ex.toString()}\n${ex.getStackTrace().join("\n")}"
         cacheExists = false
         sh "rm -rf ${cacheTarball}"
